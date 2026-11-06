@@ -119,9 +119,26 @@ let secretClicks=0,secretTimer=null;
 function secretTap(){secretClicks++;clearTimeout(secretTimer);secretTimer=setTimeout(()=>secretClicks=0,1300);if(secretClicks>=3){secretClicks=0;$("login").classList.remove("hidden");}}
 $("secretLogo").onclick=secretTap;$("introLogo").onclick=secretTap;
 $("closeSecret").onclick=()=>$("login").classList.add("hidden");
+async function checkAdmin(uid){
+ const snap=await db.collection("admins").doc(uid).get({source:"server"});
+ const data=snap.exists?snap.data():null;
+ console.info("LEF admin check",{projectId:firebaseConfig.projectId,uid,documentExists:snap.exists,active:data?.active,activeType:typeof data?.active});
+ return {authorized:snap.exists&&data?.active===true,exists:snap.exists,active:data?.active,activeType:typeof data?.active};
+}
 function initFirebase(){
- try{if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);db=firebase.firestore();auth=firebase.auth();$("connection").textContent="FIREBASE CONECTADO";auth.onAuthStateChanged(async u=>{user=u;isAdmin=false;if(u){try{const d=await db.collection("admins").doc(u.uid).get();isAdmin=d.exists&&d.data().active===true;}catch(e){} }updateAdminUI();});refresh();}
- catch(e){$("connection").textContent="FIREBASE NÃO CONFIGURADO";console.error(e);}
+ try{
+  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
+  db=firebase.firestore();auth=firebase.auth();$("connection").textContent="FIREBASE CONECTADO";
+  auth.onAuthStateChanged(async u=>{
+   user=u;isAdmin=false;
+   if(u){
+    try{const result=await checkAdmin(u.uid);isAdmin=result.authorized;}
+    catch(e){console.error("LEF admin verification failed",e);isAdmin=false;}
+   }
+   updateAdminUI();
+  });
+  refresh();
+ }catch(e){$("connection").textContent="FIREBASE NÃO CONFIGURADO";console.error(e);}
 }
 function updateAdminUI(){$("adminIdentity").textContent=user?.email||"ADMINISTRADOR";$("adminPanel").classList.toggle("hidden",!isAdmin);$("adminLoginBox").classList.toggle("hidden",isAdmin);$("adminbar").style.display=isAdmin?"block":"none";if(isAdmin)setPage("admin");}
 async function getAll(col){if(!db)return[];const snap=await db.collection(col).get();return snap.docs.map(d=>({id:d.id,...d.data()}));}
@@ -171,19 +188,21 @@ async function doLogin(email,password,msg){
  try{
   const credential=await auth.signInWithEmailAndPassword(email.trim(),password);
   const loggedUser=credential.user;
-  let adminDoc;
-  try{adminDoc=await db.collection("admins").doc(loggedUser.uid).get();}
+  let result;
+  try{result=await checkAdmin(loggedUser.uid);}
   catch(readError){
-   console.error("Erro ao verificar admins/{uid}:",readError);
-   msg.textContent="E-mail e senha corretos, mas o Firestore não permitiu verificar a autorização. Confira as regras de leitura da coleção admins.";
+   console.error("Erro ao verificar admins/{uid} no servidor:",readError);
+   const code=readError.code||"erro desconhecido";
+   msg.textContent="E-mail e senha corretos, mas não foi possível consultar admins no Firestore ("+code+"). Verifique as regras de leitura.";
    await auth.signOut();
    return;
   }
-  if(!adminDoc.exists||adminDoc.data().active!==true){
-   msg.textContent="Login correto, mas esta conta não está autorizada. Confira se o documento admins tem o UID desta conta e active = true.";
+  if(!result.authorized){
+   msg.textContent="O Firebase consultou o projeto "+firebaseConfig.projectId+". UID autenticado: "+loggedUser.uid+". Documento admins encontrado: "+result.exists+". Campo active: "+String(result.active)+" (tipo: "+result.activeType+").";
    await auth.signOut();
    return;
   }
+  user=loggedUser;isAdmin=true;updateAdminUI();
   msg.textContent="Acesso autorizado!";
   $("login").classList.add("hidden");
   const mainMsg=$("loginMessage");if(mainMsg)mainMsg.textContent="";
