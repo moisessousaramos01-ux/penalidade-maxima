@@ -8,58 +8,33 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{
- --bg:#080d18;--panel:#101827;--panel2:#172338;--line:#202d43;
- --gold:#3978f6;--gold2:#dce8ff;--white:#edf3ff;--muted:#8493aa;
- --red:#ef626d;--green:#36c995;--blue:#3978f6;
-}
-*{box-sizing:border-box}
-html{min-height:100%;background:var(--bg)}
-body{margin:0;min-height:100vh;background:var(--bg);color:var(--white);font-family:Inter,Arial,sans-serif}
-button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-#intro{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse at center,#14264a 0,#0b1425 36%,#080d18 76%)}
-.intro-inner{max-width:650px}.brand{font:900 clamp(48px,13vw,104px) Cinzel,serif;letter-spacing:3px;background:linear-gradient(#fff,#76a5ff,#2863dc);color:transparent;background-clip:text;-webkit-background-clip:text}
-.intro-sub{letter-spacing:4px;color:#83aaff;font-size:clamp(10px,2vw,14px);margin:14px 0 34px}
-.enter{border:0;border-radius:9px;padding:14px 48px;background:linear-gradient(135deg,#4d8cff,#245bd1);font-weight:800;letter-spacing:1px;color:white;box-shadow:0 8px 30px #2863dc44}
-#site{min-height:100vh}
-header{position:sticky;top:0;z-index:10;margin-left:236px;background:#0b1322f5;border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
-.top{max-width:none;margin:auto;padding:14px 24px;min-height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{font:900 21px Cinzel,serif;color:#83aaff;cursor:pointer;letter-spacing:1px}
-.status{font-size:10px;color:#9bb0ce;background:#13223a;border:1px solid #243b60;padding:7px 10px;border-radius:7px}
-nav{position:fixed;z-index:15;left:0;top:0;bottom:0;width:236px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;padding:20px 12px;background:#070d18;border-right:1px solid #1b2940;scrollbar-width:thin}
-nav:before{content:'LEF  /  LIGA EUROPEIA';display:block;color:#8eb2ff;font-size:12px;font-weight:900;letter-spacing:1.2px;padding:7px 10px 22px}
-nav button{width:100%;text-align:left;white-space:nowrap;border:1px solid transparent;background:transparent;color:#91a0b7;border-radius:8px;padding:11px 12px;font-size:11px;font-weight:700;letter-spacing:.2px;transition:.18s}
-nav button:hover{background:#111e32;color:#e7efff}
-nav button.active{background:#245fd7;border-color:#3978f6;color:white;box-shadow:0 5px 18px #174dbb35}
-main{max-width:1500px;margin:0 0 0 236px;padding:26px 26px 90px;min-height:calc(100vh - 100px)}
-.page{display:none}.page.active{display:block;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:.65;transform:translateY(4px)}to{opacity:1;transform:none}}
-h1,h2,h3{margin:0 0 14px}h1,h2{font-family:Inter,Arial,sans-serif;color:#e5edff;font-weight:800;letter-spacing:-.4px}h1{font-size:25px}h2{font-size:21px}h3{font-size:14px;color:#dce7fb}
-.muted{color:var(--muted)}.small{font-size:11px;color:var(--muted);line-height:1.55}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:22px 0}
-.card{background:linear-gradient(145deg,#111d30,#0e1727);border:1px solid #1e2d45;border-radius:11px;padding:17px;min-width:0;box-shadow:0 8px 24px #00000016}
-.stat-label{font-size:10px;color:#8fa1bc;letter-spacing:.7px;font-weight:700}.stat-value{font-size:27px;font-weight:900;margin-top:8px;color:#f1f5ff;letter-spacing:-.5px}.gold{color:#80aaff}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
-.btn{border:1px solid #2a3b56;background:#17253a;color:var(--white);padding:10px 14px;border-radius:8px;font-size:12px;font-weight:700}
-.btn.primary{background:linear-gradient(135deg,#4386ff,#245bd1);color:white;border:0}.btn.danger{border-color:#713b48;color:#ff9ba6}.btn:disabled{opacity:.45;cursor:not-allowed}
-.field{display:flex;flex-direction:column;gap:5px;margin:9px 0}.field label{font-size:11px;color:#9aabc4}
-input,select,textarea{width:100%;padding:11px 12px;border:1px solid #2a3a53;border-radius:8px;background:#0a1322;color:var(--white);outline:none}
-input:focus,select:focus,textarea:focus{border-color:#4c8cff;box-shadow:0 0 0 3px #3978f622}
-textarea{min-height:90px;resize:vertical}.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
-table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:12px}th{font-size:10px;color:#91a2bc;text-transform:uppercase}
+:root{--bg:#090a0d;--panel:#11141b;--panel2:#171b24;--line:#292e3a;--gold:#d4af37;--gold2:#f5dc82;--white:#eeeDE8;--muted:#999eaa;--red:#e15b5b;--green:#65c995}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+#intro{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse at center,#29220d 0,#11100b 28%,#090a0d 72%)}
+.intro-inner{max-width:650px}.brand{font:900 clamp(48px,13vw,104px) Cinzel,serif;letter-spacing:3px;background:linear-gradient(#fff0ae,#d4af37,#8d6818);color:transparent;background-clip:text;-webkit-background-clip:text}
+.intro-sub{letter-spacing:5px;color:var(--gold);font-size:clamp(10px,2vw,14px);margin:14px 0 34px}.enter{border:0;border-radius:12px;padding:15px 48px;background:linear-gradient(#f8df8b,#c79b28);font-weight:900;letter-spacing:2px;color:#15120a;box-shadow:0 8px 30px #d4af3733}
+header{position:sticky;top:0;z-index:10;background:#090a0df2;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font:900 21px Cinzel,serif;color:var(--gold);cursor:pointer}.status{font-size:10px;color:var(--muted)}
+nav{display:flex;gap:7px;overflow:auto;padding:0 14px 12px;max-width:1200px;margin:auto;scrollbar-width:thin}
+nav button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:30px;padding:9px 13px;font-size:11px;font-weight:700}
+nav button.active{background:var(--gold);border-color:var(--gold);color:#17130a}
+main{max-width:1200px;margin:auto;padding:22px 16px 90px}.page{display:none}.page.active{display:block}
+h1,h2,h3{margin:0 0 14px}h1,h2{font-family:Cinzel,serif;color:var(--gold2)}h2{font-size:22px}h3{font-size:15px}.muted{color:var(--muted)}.small{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
+.card{background:linear-gradient(145deg,var(--panel),#0e1015);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.stat-label{font-size:10px;color:var(--muted);letter-spacing:1px}.stat-value{font-size:25px;font-weight:900;margin-top:6px}.gold{color:var(--gold2)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--white);padding:10px 14px;border-radius:10px;font-size:12px;font-weight:700}.btn.primary{background:linear-gradient(#f5dc82,#c79b28);color:#15120a;border:0}.btn.danger{border-color:#713b40;color:#ff9b9b}.btn:disabled{opacity:.45;cursor:not-allowed}
+.field{display:flex;flex-direction:column;gap:5px;margin:9px 0}.field label{font-size:11px;color:var(--muted)}input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#090b10;color:var(--white);outline:none}textarea{min-height:90px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:12px}th{font-size:10px;color:var(--muted);text-transform:uppercase}
 .table-wrap{overflow:auto}.empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}
-.item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-title{font-weight:800}.pill{display:inline-block;border:1px solid #304666;border-radius:30px;padding:4px 8px;color:#a8c4f7;font-size:10px;background:#14233a}
-.notice{border:1px solid #345a9a;background:#11203a;border-radius:10px;padding:14px;margin:0 0 12px}.notice h3{color:#a9c8ff}
-#login{position:fixed;inset:0;z-index:50;background:#020712d9;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(5px)}
-.modal{width:min(100%,430px);background:#101b2d;border:1px solid #3978f6;border-radius:14px;padding:22px;box-shadow:0 20px 80px #000b}
-#adminbar{display:none;position:fixed;bottom:12px;right:12px;z-index:20;background:#142746;border:1px solid #3978f6;color:#b9d1ff;padding:8px 12px;border-radius:30px;font-size:10px}
-footer{margin-left:236px;text-align:center;color:#62728a;font-size:10px;padding:24px;border-top:1px solid #17243a}
-#page-inicio>p.muted{margin-top:-4px;margin-bottom:20px}
-#page-inicio .grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-@media(min-width:1000px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.top{padding:14px 28px}main{padding:30px 30px 90px}}
-@media(max-width:760px){header{margin-left:0}.top{padding:12px 15px}nav{position:sticky;top:58px;bottom:auto;width:100%;height:auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;padding:8px 10px;background:#080f1c;border-right:0;border-bottom:1px solid var(--line)}nav:before{display:none}nav button{width:auto;flex:0 0 auto;padding:9px 12px}main{margin:0;padding:20px 13px 80px}footer{margin-left:0}.stats{gap:9px}.stat-value{font-size:23px}}
-@media(max-width:390px){.stats{grid-template-columns:1fr 1fr}.card{padding:13px}.stat-value{font-size:21px}}
+.item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-title{font-weight:800}.pill{display:inline-block;border:1px solid var(--line);border-radius:30px;padding:4px 8px;color:var(--muted);font-size:10px}
+.notice{border:1px solid #806923;background:#211b0d;border-radius:13px;padding:14px;margin:0 0 12px}.notice h3{color:var(--gold2)}
+#login{position:fixed;inset:0;z-index:50;background:#000d;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal{width:min(100%,430px);background:var(--panel);border:1px solid var(--gold);border-radius:17px;padding:20px;box-shadow:0 20px 80px #000}
+#adminbar{display:none;position:fixed;bottom:12px;right:12px;z-index:20;background:#1c190f;border:1px solid var(--gold);color:var(--gold2);padding:8px 12px;border-radius:30px;font-size:10px}
+footer{text-align:center;color:#626773;font-size:10px;padding:24px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.top{padding:16px 22px}main{padding:28px 22px 90px}}
 </style>
 </head>
 <body>
@@ -144,58 +119,9 @@ let secretClicks=0,secretTimer=null;
 function secretTap(){secretClicks++;clearTimeout(secretTimer);secretTimer=setTimeout(()=>secretClicks=0,1300);if(secretClicks>=3){secretClicks=0;$("login").classList.remove("hidden");}}
 $("secretLogo").onclick=secretTap;$("introLogo").onclick=secretTap;
 $("closeSecret").onclick=()=>$("login").classList.add("hidden");
-function firebaseErrorText(e){
- const code=e?.code||"sem-código";
- const message=e?.message||String(e||"Erro desconhecido");
- return `Erro Firebase (${code}): ${message}`;
-}
-async function checkAdmin(uid){
- try{
-  const snap=await db.collection("admins").doc(uid).get({source:"server"});
-  if(!snap.exists){
-   return {authorized:false,message:`Conta autenticada, mas o documento admins/${uid} NÃO foi encontrado no banco consultado.`};
-  }
-  const data=snap.data()||{};
-  if(data.active!==true){
-   return {authorized:false,message:`Documento admins/${uid} encontrado, mas o campo "active" não está como Boolean true. Valor recebido: ${JSON.stringify(data.active)} (tipo ${typeof data.active}).`};
-  }
-  return {authorized:true,message:"Administrador autorizado."};
- }catch(e){
-  console.error("Falha ao consultar admins/{uid}:",e);
-  return {authorized:false,message:firebaseErrorText(e)};
- }
-}
-function showAdminDiagnostic(message){
- const text=`Verificação de administrador: ${message}`;
- if($("loginMessage"))$("loginMessage").textContent=text;
- if($("secretMessage"))$("secretMessage").textContent=text;
-}
 function initFirebase(){
- try{
-  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-  db=firebase.firestore();
-  auth=firebase.auth();
-  $("connection").textContent="FIREBASE CONECTADO";
-  auth.onAuthStateChanged(async u=>{
-   user=u;
-   isAdmin=false;
-   if(u){
-    showAdminDiagnostic("Login confirmado. Consultando o documento de autorização...");
-    const result=await checkAdmin(u.uid);
-    isAdmin=result.authorized;
-    showAdminDiagnostic(result.message);
-    if(isAdmin)$("login").classList.add("hidden");
-   }else{
-    showAdminDiagnostic("Nenhuma conta autenticada.");
-   }
-   updateAdminUI();
-  });
-  refresh();
- }catch(e){
-  $("connection").textContent="FIREBASE NÃO CONFIGURADO";
-  console.error(e);
-  showAdminDiagnostic(firebaseErrorText(e));
- }
+ try{if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);db=firebase.firestore();auth=firebase.auth();$("connection").textContent="FIREBASE CONECTADO";auth.onAuthStateChanged(async u=>{user=u;isAdmin=false;if(u){try{const d=await db.collection("admins").doc(u.uid).get();isAdmin=d.exists&&d.data().active===true;}catch(e){} }updateAdminUI();});refresh();}
+ catch(e){$("connection").textContent="FIREBASE NÃO CONFIGURADO";console.error(e);}
 }
 function updateAdminUI(){$("adminIdentity").textContent=user?.email||"ADMINISTRADOR";$("adminPanel").classList.toggle("hidden",!isAdmin);$("adminLoginBox").classList.toggle("hidden",isAdmin);$("adminbar").style.display=isAdmin?"block":"none";if(isAdmin)setPage("admin");}
 async function getAll(col){if(!db)return[];const snap=await db.collection(col).get();return snap.docs.map(d=>({id:d.id,...d.data()}));}
@@ -238,15 +164,7 @@ async function addDoc(col,data,description){if(!await requireAdmin())return;try{
 $("loginBtn").onclick=loginMain;$("secretLoginBtn").onclick=loginSecret;
 async function loginMain(){await doLogin($("loginEmail").value,$("loginPassword").value,$("loginMessage"))}
 async function loginSecret(){await doLogin($("secretEmail").value,$("secretPassword").value,$("secretMessage"))}
-async function doLogin(email,password,msg){
- try{
-  msg.textContent="Enviando login e verificando autorização...";
-  await auth.signInWithEmailAndPassword(email.trim(),password);
- }catch(e){
-  console.error("Falha no login:",e);
-  msg.textContent=firebaseErrorText(e);
- }
-}
+async function doLogin(email,password,msg){try{await auth.signInWithEmailAndPassword(email.trim(),password);$("login").classList.add("hidden");msg.textContent="";}catch(e){msg.textContent="Não foi possível entrar. Confira os dados e a conta autorizada.";}}
 $("logoutBtn").onclick=()=>auth.signOut();
 $("addTeamBtn").onclick=()=>addDoc("times",{name:$("teamName").value.trim(),logo:$("teamLogo").value.trim(),cash:Number($("teamCash").value||0),titles:0,runnersUp:0},"Cadastro de time: "+$("teamName").value);
 $("addCompanyBtn").onclick=()=>addDoc("empresas",{name:$("companyName").value.trim(),logo:$("companyLogo").value.trim(),cash:Number($("companyCash").value||0),valuation:0},"Cadastro de empresa: "+$("companyName").value);
