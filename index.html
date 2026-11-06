@@ -14,7 +14,8 @@
 .intro-inner{max-width:650px}.brand{font:900 clamp(48px,13vw,104px) Cinzel,serif;letter-spacing:3px;background:linear-gradient(#fff0ae,#d4af37,#8d6818);color:transparent;background-clip:text;-webkit-background-clip:text}
 .intro-sub{letter-spacing:5px;color:var(--gold);font-size:clamp(10px,2vw,14px);margin:14px 0 34px}.enter{border:0;border-radius:12px;padding:15px 48px;background:linear-gradient(#f8df8b,#c79b28);font-weight:900;letter-spacing:2px;color:#15120a;box-shadow:0 8px 30px #d4af3733}
 header{position:sticky;top:0;z-index:10;background:#090a0df2;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
-.top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font:900 21px Cinzel,serif;color:var(--gold);cursor:pointer}nav{display:flex;gap:7px;overflow:auto;padding:0 14px 12px;max-width:1200px;margin:auto;scrollbar-width:thin}
+.top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font:900 21px Cinzel,serif;color:var(--gold);cursor:pointer}.status{font-size:10px;color:var(--muted)}
+nav{display:flex;gap:7px;overflow:auto;padding:0 14px 12px;max-width:1200px;margin:auto;scrollbar-width:thin}
 nav button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:30px;padding:9px 13px;font-size:11px;font-weight:700}
 nav button.active{background:var(--gold);border-color:var(--gold);color:#17130a}
 main{max-width:1200px;margin:auto;padding:22px 16px 90px}.page{display:none}.page.active{display:block}
@@ -47,9 +48,9 @@ footer{text-align:center;color:#626773;font-size:10px;padding:24px}
 
 <div id="site" class="hidden">
 <header>
- <div class="top"><div class="logo" id="secretLogo" title="LEF">LEF</div></div>
+ <div class="top"><div class="logo" id="secretLogo" title="LEF">LEF</div><div class="status" id="connection">MODO DE VISUALIZAÇÃO</div></div>
  <nav id="nav">
-  <button class="active" data-page="inicio">INÍCIO</button><button data-page="times">TIMES</button><button data-page="jogadores">JOGADORES</button><button data-page="empresas">EMPRESAS</button><button data-page="competicoes">COMPETIÇÕES</button><button data-page="transferencias">TRANSFERÊNCIAS</button><button data-page="premiacoes">PREMIAÇÕES</button><button data-page="rankings">RANKINGS</button><button data-page="museu">MUSEU</button><button data-page="historico">HISTÓRICO</button>
+  <button class="active" data-page="inicio">INÍCIO</button><button data-page="times">TIMES</button><button data-page="jogadores">JOGADORES</button><button data-page="empresas">EMPRESAS</button><button data-page="competicoes">COMPETIÇÕES</button><button data-page="transferencias">TRANSFERÊNCIAS</button><button data-page="premiacoes">PREMIAÇÕES</button><button data-page="rankings">RANKINGS</button><button data-page="museu">MUSEU</button><button data-page="historico">HISTÓRICO</button><button data-page="admin">ADMIN</button>
  </nav>
 </header>
 <main>
@@ -75,6 +76,7 @@ footer{text-align:center;color:#626773;font-size:10px;padding:24px}
  <section class="page" id="page-historico"><h2>Histórico oficial</h2><div id="historyList"></div></section>
  <section class="page" id="page-admin">
   <h2>Painel administrativo</h2><p class="small">Área disponível somente para administradores autenticados.</p>
+  <div class="card" id="adminLoginBox"><h3>Acesso administrativo</h3><div class="field"><label>E-mail cadastrado no Firebase Authentication</label><input id="loginEmail" type="email" autocomplete="username"></div><div class="field"><label>Senha</label><input id="loginPassword" type="password" autocomplete="current-password"></div><button class="btn primary" id="loginBtn">Entrar</button><p id="loginMessage" class="small"></p></div>
   <div id="adminPanel" class="hidden">
    <div class="actions"><span class="pill" id="adminIdentity">ADMINISTRADOR</span><button class="btn" id="logoutBtn">Sair</button></div>
    <div class="card"><h3>Temporada</h3><p class="small">Preparação é apenas um status visual. Depois de iniciada, a temporada não volta para preparação.</p><div class="actions"><button class="btn" id="startSeasonBtn">Iniciar temporada</button><button class="btn" id="closeSeasonBtn">Encerrar temporada</button><button class="btn danger" id="resetBtn">Reiniciar todo o sistema</button></div><div id="seasonAdminStatus" class="small"></div></div>
@@ -118,33 +120,10 @@ function secretTap(){secretClicks++;clearTimeout(secretTimer);secretTimer=setTim
 $("secretLogo").onclick=secretTap;$("introLogo").onclick=secretTap;
 $("closeSecret").onclick=()=>$("login").classList.add("hidden");
 function initFirebase(){
- try{
-  if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-  db=firebase.firestore();auth=firebase.auth();
-  auth.onAuthStateChanged(async u=>{
-   user=u;isAdmin=false;
-   if(u){
-    try{
-     const d=await db.collection("admins").doc(u.uid).get();
-     isAdmin=d.exists&&d.data().active===true;
-    }catch(e){console.error("Falha ao verificar administrador:",e);}
-    if(!isAdmin){
-     await auth.signOut();
-     $("secretMessage").textContent="Esta conta não possui autorização administrativa.";
-    }
-   }
-   updateAdminUI();
-  });
-  refresh();
- }catch(e){console.error("Falha ao iniciar o Firebase:",e);}
+ try{if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);db=firebase.firestore();auth=firebase.auth();$("connection").textContent="FIREBASE CONECTADO";auth.onAuthStateChanged(async u=>{user=u;isAdmin=false;if(u){try{const d=await db.collection("admins").doc(u.uid).get();isAdmin=d.exists&&d.data().active===true;}catch(e){} }updateAdminUI();});refresh();}
+ catch(e){$("connection").textContent="FIREBASE NÃO CONFIGURADO";console.error(e);}
 }
-function updateAdminUI(){
- $("adminIdentity").textContent=user?.email||"ADMINISTRADOR";
- $("adminPanel").classList.toggle("hidden",!isAdmin);
- $("adminbar").style.display=isAdmin?"block":"none";
- if(isAdmin){$("login").classList.add("hidden");setPage("admin");}
- else if($("page-admin").classList.contains("active")){setPage("inicio");}
-}
+function updateAdminUI(){$("adminIdentity").textContent=user?.email||"ADMINISTRADOR";$("adminPanel").classList.toggle("hidden",!isAdmin);$("adminLoginBox").classList.toggle("hidden",isAdmin);$("adminbar").style.display=isAdmin?"block":"none";if(isAdmin)setPage("admin");}
 async function getAll(col){if(!db)return[];const snap=await db.collection(col).get();return snap.docs.map(d=>({id:d.id,...d.data()}));}
 async function refresh(){
  if(!db){render();return;}
@@ -153,7 +132,7 @@ async function refresh(){
   const vals=await Promise.all(names.map(getAll));names.forEach((n,i)=>cache[n]=vals[i]);
   const cfg=await db.collection("config").doc("sistema").get();if(cfg.exists)cache.config={...cache.config,...cfg.data()};
   render();
- }catch(e){console.error("Falha ao carregar os dados públicos:",e);render();}
+ }catch(e){console.error(e);$("connection").textContent="ERRO AO LER FIRESTORE";render();}
 }
 function render(){
  $("statTeams").textContent=cache.times.length;$("statPlayers").textContent=cache.jogadores.length;$("statCompanies").textContent=cache.empresas.length;$("statCompetitions").textContent=cache.competicoes.length;
@@ -182,28 +161,50 @@ function dateText(v){try{return v?.toDate?v.toDate().toLocaleString("pt-BR"):v?n
 async function requireAdmin(){if(!user||!isAdmin){toast("Ação permitida somente para administrador autorizado.");return false;}return true;}
 async function logAction(action,details){if(!db||!user)return;await db.collection("auditoria").add({action,details,adminUid:user.uid,adminEmail:user.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
 async function addDoc(col,data,description){if(!await requireAdmin())return;try{const ref=await db.collection(col).add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:user.uid});await logAction("CRIAR_"+col,description||ref.id);await refresh();toast("Registro salvo.");}catch(e){console.error(e);toast("Não foi possível salvar. Verifique as regras do Firestore.");}}
-$("secretLoginBtn").onclick=loginSecret;
-async function loginSecret(){
- const email=$("secretEmail").value.trim(),password=$("secretPassword").value;
- const msg=$("secretMessage");
- msg.textContent="";
- if(!email||!password){msg.textContent="Informe e-mail e senha.";return;}
- if(!auth){msg.textContent="O acesso administrativo está indisponível no momento.";return;}
+$("loginBtn").onclick=loginMain;$("secretLoginBtn").onclick=loginSecret;
+async function loginMain(){await doLogin($("loginEmail").value,$("loginPassword").value,$("loginMessage"))}
+async function loginSecret(){await doLogin($("secretEmail").value,$("secretPassword").value,$("secretMessage"))}
+async function doLogin(email,password,msg){
+ msg.textContent="Verificando acesso...";
+ if(!auth){msg.textContent="Firebase Authentication não foi inicializado. Recarregue o site e tente novamente.";return;}
+ if(!email.trim()||!password){msg.textContent="Informe o e-mail e a senha.";return;}
  try{
-  const credential=await auth.signInWithEmailAndPassword(email,password);
-  const adminDoc=await db.collection("admins").doc(credential.user.uid).get();
-  if(!adminDoc.exists||adminDoc.data().active!==true){
+  const credential=await auth.signInWithEmailAndPassword(email.trim(),password);
+  const loggedUser=credential.user;
+  let adminDoc;
+  try{adminDoc=await db.collection("admins").doc(loggedUser.uid).get();}
+  catch(readError){
+   console.error("Erro ao verificar admins/{uid}:",readError);
+   msg.textContent="E-mail e senha corretos, mas o Firestore não permitiu verificar a autorização. Confira as regras de leitura da coleção admins.";
    await auth.signOut();
-   msg.textContent="Esta conta não possui autorização administrativa.";
    return;
   }
-  user=credential.user;isAdmin=true;updateAdminUI();msg.textContent="";
+  if(!adminDoc.exists||adminDoc.data().active!==true){
+   msg.textContent="Login correto, mas esta conta não está autorizada. Confira se o documento admins tem o UID desta conta e active = true.";
+   await auth.signOut();
+   return;
+  }
+  msg.textContent="Acesso autorizado!";
+  $("login").classList.add("hidden");
+  const mainMsg=$("loginMessage");if(mainMsg)mainMsg.textContent="";
  }catch(e){
-  console.error("Falha no login administrativo:",e);
-  msg.textContent="Não foi possível entrar. Confira o e-mail, a senha e a autorização.";
+  console.error("Falha no login Firebase:",e);
+  const messages={
+   "auth/invalid-email":"O formato do e-mail é inválido. Confira se digitou corretamente.",
+   "auth/user-not-found":"Esse e-mail não está cadastrado no Firebase Authentication.",
+   "auth/wrong-password":"A senha está incorreta. Confira a senha cadastrada.",
+   "auth/invalid-credential":"E-mail ou senha incorretos. Confira os dados cadastrados no Firebase Authentication.",
+   "auth/invalid-login-credentials":"E-mail ou senha incorretos. Confira os dados cadastrados no Firebase Authentication.",
+   "auth/user-disabled":"Essa conta foi desativada no Firebase Authentication.",
+   "auth/too-many-requests":"Muitas tentativas. Aguarde um pouco e tente novamente.",
+   "auth/network-request-failed":"Falha de conexão. Verifique a internet e tente novamente.",
+   "auth/operation-not-allowed":"O método E-mail/senha não está habilitado no Firebase Authentication.",
+   "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"A chave de API configurada no site foi recusada pelo Firebase."
+  };
+  msg.textContent=messages[e.code]||("Erro do Firebase: "+(e.code||e.message||"erro desconhecido"));
  }
 }
-$("logoutBtn").onclick=async()=>{if(auth)await auth.signOut();$("login").classList.add("hidden");};
+$("logoutBtn").onclick=()=>auth.signOut();
 $("addTeamBtn").onclick=()=>addDoc("times",{name:$("teamName").value.trim(),logo:$("teamLogo").value.trim(),cash:Number($("teamCash").value||0),titles:0,runnersUp:0},"Cadastro de time: "+$("teamName").value);
 $("addCompanyBtn").onclick=()=>addDoc("empresas",{name:$("companyName").value.trim(),logo:$("companyLogo").value.trim(),cash:Number($("companyCash").value||0),valuation:0},"Cadastro de empresa: "+$("companyName").value);
 $("addPlayerBtn").onclick=async()=>{const name=$("playerName").value.trim(),companyId=$("playerCompany").value,bonus=Number($("playerBonus").value||0);if(!name||!companyId||bonus<0||bonus>100)return toast("Preencha nome, empresa e bônus válido (0 a 100%).");await addDoc("jogadores",{name,nationality:$("playerNation").value.trim(),position:$("playerPosition").value,companyId,bonus,activeSeasons:0,status:"Inativo",profit:0,titles:0,awards:[]},`Cadastro de jogador: ${name}`);};
