@@ -36,13 +36,17 @@ table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;
 footer{text-align:center;color:#626773;font-size:10px;padding:24px}
 @media(min-width:700px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.top{padding:16px 22px}main{padding:28px 22px 90px}}
 
-/* PAINEL ADMINISTRATIVO: entrada direta no formulário de autenticação. */
+/* PAINEL ADMINISTRATIVO: acesso direto ao login e ao editor. */
 #intro{display:none!important}
 #site{display:block!important}
+#site>header{display:none!important}
+#site main>.page:not(#page-admin){display:none!important}
+#page-admin{display:block!important}
+#page-admin.page{display:block!important}
 #login{display:none!important}
 </style>
 </head>
-<body>
+<body data-mode="admin">
 <section id="intro">
  <div class="intro-inner">
   <div class="brand" id="introLogo">LEF</div>
@@ -100,10 +104,10 @@ footer{text-align:center;color:#626773;font-size:10px;padding:24px}
 <footer>LEF · LIGA EUROPEIA DE FUTEBOL</footer>
 </div>
 <div id="adminbar">ADMINISTRADOR AUTENTICADO</div>
-<div id="login" class="hidden"><div class="modal"><h2>Área administrativa</h2><p class="small">Entre com uma conta autorizada.</p><div class="field"><label>E-mail</label><input id="secretEmail" type="email"></div><div class="field"><label>Senha</label><input id="secretPassword" type="password"></div><button class="btn primary" id="secretLoginBtn" style="width:100%">Entrar</button><button class="btn" id="closeSecret" style="width:100%;margin-top:8px">Cancelar</button><p id="secretMessage" class="small"></p></div></div>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="firebase.js"></script>
 <script>
 /*
  LEF — base de interface em arquivo único.
@@ -111,7 +115,7 @@ footer{text-align:center;color:#626773;font-size:10px;padding:24px}
  Segurança real depende das regras do Firestore e da autorização de administradores
  no Firebase Authentication/Custom Claims. Nunca coloque senhas administrativas aqui.
 */
-const firebaseConfig={apiKey:"AIzaSyAQIXi3xWamLNW6wJRzQT9Ky7tXQJZDY5s",authDomain:"lef-os-a8aff.firebaseapp.com",projectId:"lef-os-a8aff",storageBucket:"lef-os-a8aff.firebasestorage.app",messagingSenderId:"437363191998",appId:"1:437363191998:web:946fa1688bfc7e9469eeef"};
+/* firebaseConfig é carregado pelo arquivo compartilhado firebase.js */
 let db=null,auth=null,user=null,isAdmin=false,cache={times:[],empresas:[],jogadores:[],competicoes:[],transferencias:[],premiacoes:[],historico:[],avisos:[],museu:[],config:{seasonStatus:"PREPARAÇÃO"}};
 const $=id=>document.getElementById(id);
 const money=v=>"R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:0});
@@ -120,10 +124,7 @@ function toast(msg){alert(msg)}
 function setPage(name){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$("page-"+name)?.classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===name));window.scrollTo({top:0,behavior:"smooth"});}
 document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
 $("enterBtn").onclick=()=>{$("intro").classList.add("hidden");$("site").classList.remove("hidden");setPage("admin");refresh();};
-let secretClicks=0,secretTimer=null;
-function secretTap(){secretClicks++;clearTimeout(secretTimer);secretTimer=setTimeout(()=>secretClicks=0,1300);if(secretClicks>=3){secretClicks=0;$("login").classList.remove("hidden");}}
-$("secretLogo").onclick=secretTap;$("introLogo").onclick=secretTap;
-$("closeSecret").onclick=()=>$("login").classList.add("hidden");
+
 function firebaseErrorText(e){
  const code=e?.code||"sem-código";
  const message=e?.message||String(e||"Erro desconhecido");
@@ -148,7 +149,6 @@ async function checkAdmin(uid){
 function showAdminDiagnostic(message){
  const text=`Verificação de administrador: ${message}`;
  if($("loginMessage"))$("loginMessage").textContent=text;
- if($("secretMessage"))$("secretMessage").textContent=text;
 }
 function initFirebase(){
  try{
@@ -215,17 +215,21 @@ function dateText(v){try{return v?.toDate?v.toDate().toLocaleString("pt-BR"):v?n
 async function requireAdmin(){if(!user||!isAdmin){toast("Ação permitida somente para administrador autorizado.");return false;}return true;}
 async function logAction(action,details){if(!db||!user)return;await db.collection("auditoria").add({action,details,adminUid:user.uid,adminEmail:user.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});}
 async function addDoc(col,data,description){if(!await requireAdmin())return;try{const ref=await db.collection(col).add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:user.uid});await logAction("CRIAR_"+col,description||ref.id);await refresh();toast("Registro salvo.");}catch(e){console.error(e);toast("Não foi possível salvar. Verifique as regras do Firestore.");}}
-$("loginBtn").onclick=loginMain;$("secretLoginBtn").onclick=loginSecret;
+$("loginBtn").onclick=loginMain;
 async function loginMain(){await doLogin($("loginEmail").value,$("loginPassword").value,$("loginMessage"))}
-async function loginSecret(){await doLogin($("secretEmail").value,$("secretPassword").value,$("secretMessage"))}
 async function doLogin(email,password,msg){
- if(!auth){msg.textContent="Firebase Authentication não foi inicializado. Recarregue a página.";return;}
+ if(!auth){msg.textContent="Firebase Authentication não foi inicializado. Confira firebase.js e recarregue a página.";return;}
  email=(email||"").trim().toLowerCase();
  if(!email||!password){msg.textContent="Informe o e-mail e a senha.";return;}
  msg.textContent="Validando e-mail e senha no Firebase...";
  try{
-  await auth.signInWithEmailAndPassword(email,password);
-  msg.textContent="Login aceito. Conferindo autorização administrativa...";
+  const cred=await auth.signInWithEmailAndPassword(email,password);
+  msg.textContent="Login aceito. Conferindo admins/"+cred.user.uid+"...";
+  const result=await checkAdmin(cred.user.uid);
+  user=cred.user;
+  isAdmin=result.authorized;
+  updateAdminUI();
+  msg.textContent=result.authorized?"Administrador autorizado! Painel liberado.":result.message;
  }catch(e){
   console.error("Falha no login:",e);
   const messages={
