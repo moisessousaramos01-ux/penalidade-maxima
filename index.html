@@ -119,26 +119,58 @@ let secretClicks=0,secretTimer=null;
 function secretTap(){secretClicks++;clearTimeout(secretTimer);secretTimer=setTimeout(()=>secretClicks=0,1300);if(secretClicks>=3){secretClicks=0;$("login").classList.remove("hidden");}}
 $("secretLogo").onclick=secretTap;$("introLogo").onclick=secretTap;
 $("closeSecret").onclick=()=>$("login").classList.add("hidden");
+function firebaseErrorText(e){
+ const code=e?.code||"sem-código";
+ const message=e?.message||String(e||"Erro desconhecido");
+ return `Erro Firebase (${code}): ${message}`;
+}
 async function checkAdmin(uid){
- const snap=await db.collection("admins").doc(uid).get({source:"server"});
- const data=snap.exists?snap.data():null;
- console.info("LEF admin check",{projectId:firebaseConfig.projectId,uid,documentExists:snap.exists,active:data?.active,activeType:typeof data?.active});
- return {authorized:snap.exists&&data?.active===true,exists:snap.exists,active:data?.active,activeType:typeof data?.active};
+ try{
+  const snap=await db.collection("admins").doc(uid).get({source:"server"});
+  if(!snap.exists){
+   return {authorized:false,message:`Conta autenticada, mas o documento admins/${uid} NÃO foi encontrado no banco consultado.`};
+  }
+  const data=snap.data()||{};
+  if(data.active!==true){
+   return {authorized:false,message:`Documento admins/${uid} encontrado, mas o campo "active" não está como Boolean true. Valor recebido: ${JSON.stringify(data.active)} (tipo ${typeof data.active}).`};
+  }
+  return {authorized:true,message:"Administrador autorizado."};
+ }catch(e){
+  console.error("Falha ao consultar admins/{uid}:",e);
+  return {authorized:false,message:firebaseErrorText(e)};
+ }
+}
+function showAdminDiagnostic(message){
+ const text=`Verificação de administrador: ${message}`;
+ if($("loginMessage"))$("loginMessage").textContent=text;
+ if($("secretMessage"))$("secretMessage").textContent=text;
 }
 function initFirebase(){
  try{
   if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
-  db=firebase.firestore();auth=firebase.auth();$("connection").textContent="FIREBASE CONECTADO";
+  db=firebase.firestore();
+  auth=firebase.auth();
+  $("connection").textContent="FIREBASE CONECTADO";
   auth.onAuthStateChanged(async u=>{
-   user=u;isAdmin=false;
+   user=u;
+   isAdmin=false;
    if(u){
-    try{const result=await checkAdmin(u.uid);isAdmin=result.authorized;}
-    catch(e){console.error("LEF admin verification failed",e);isAdmin=false;}
+    showAdminDiagnostic("Login confirmado. Consultando o documento de autorização...");
+    const result=await checkAdmin(u.uid);
+    isAdmin=result.authorized;
+    showAdminDiagnostic(result.message);
+    if(isAdmin)$("login").classList.add("hidden");
+   }else{
+    showAdminDiagnostic("Nenhuma conta autenticada.");
    }
    updateAdminUI();
   });
   refresh();
- }catch(e){$("connection").textContent="FIREBASE NÃO CONFIGURADO";console.error(e);}
+ }catch(e){
+  $("connection").textContent="FIREBASE NÃO CONFIGURADO";
+  console.error(e);
+  showAdminDiagnostic(firebaseErrorText(e));
+ }
 }
 function updateAdminUI(){$("adminIdentity").textContent=user?.email||"ADMINISTRADOR";$("adminPanel").classList.toggle("hidden",!isAdmin);$("adminLoginBox").classList.toggle("hidden",isAdmin);$("adminbar").style.display=isAdmin?"block":"none";if(isAdmin)setPage("admin");}
 async function getAll(col){if(!db)return[];const snap=await db.collection(col).get();return snap.docs.map(d=>({id:d.id,...d.data()}));}
@@ -182,45 +214,12 @@ $("loginBtn").onclick=loginMain;$("secretLoginBtn").onclick=loginSecret;
 async function loginMain(){await doLogin($("loginEmail").value,$("loginPassword").value,$("loginMessage"))}
 async function loginSecret(){await doLogin($("secretEmail").value,$("secretPassword").value,$("secretMessage"))}
 async function doLogin(email,password,msg){
- msg.textContent="Verificando acesso...";
- if(!auth){msg.textContent="Firebase Authentication não foi inicializado. Recarregue o site e tente novamente.";return;}
- if(!email.trim()||!password){msg.textContent="Informe o e-mail e a senha.";return;}
  try{
-  const credential=await auth.signInWithEmailAndPassword(email.trim(),password);
-  const loggedUser=credential.user;
-  let result;
-  try{result=await checkAdmin(loggedUser.uid);}
-  catch(readError){
-   console.error("Erro ao verificar admins/{uid} no servidor:",readError);
-   const code=readError.code||"erro desconhecido";
-   msg.textContent="E-mail e senha corretos, mas não foi possível consultar admins no Firestore ("+code+"). Verifique as regras de leitura.";
-   await auth.signOut();
-   return;
-  }
-  if(!result.authorized){
-   msg.textContent="O Firebase consultou o projeto "+firebaseConfig.projectId+". UID autenticado: "+loggedUser.uid+". Documento admins encontrado: "+result.exists+". Campo active: "+String(result.active)+" (tipo: "+result.activeType+").";
-   await auth.signOut();
-   return;
-  }
-  user=loggedUser;isAdmin=true;updateAdminUI();
-  msg.textContent="Acesso autorizado!";
-  $("login").classList.add("hidden");
-  const mainMsg=$("loginMessage");if(mainMsg)mainMsg.textContent="";
+  msg.textContent="Enviando login e verificando autorização...";
+  await auth.signInWithEmailAndPassword(email.trim(),password);
  }catch(e){
-  console.error("Falha no login Firebase:",e);
-  const messages={
-   "auth/invalid-email":"O formato do e-mail é inválido. Confira se digitou corretamente.",
-   "auth/user-not-found":"Esse e-mail não está cadastrado no Firebase Authentication.",
-   "auth/wrong-password":"A senha está incorreta. Confira a senha cadastrada.",
-   "auth/invalid-credential":"E-mail ou senha incorretos. Confira os dados cadastrados no Firebase Authentication.",
-   "auth/invalid-login-credentials":"E-mail ou senha incorretos. Confira os dados cadastrados no Firebase Authentication.",
-   "auth/user-disabled":"Essa conta foi desativada no Firebase Authentication.",
-   "auth/too-many-requests":"Muitas tentativas. Aguarde um pouco e tente novamente.",
-   "auth/network-request-failed":"Falha de conexão. Verifique a internet e tente novamente.",
-   "auth/operation-not-allowed":"O método E-mail/senha não está habilitado no Firebase Authentication.",
-   "auth/api-key-not-valid.-please-pass-a-valid-api-key.":"A chave de API configurada no site foi recusada pelo Firebase."
-  };
-  msg.textContent=messages[e.code]||("Erro do Firebase: "+(e.code||e.message||"erro desconhecido"));
+  console.error("Falha no login:",e);
+  msg.textContent=firebaseErrorText(e);
  }
 }
 $("logoutBtn").onclick=()=>auth.signOut();
