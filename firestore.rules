@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function adminDoc() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+    function admin() { return adminDoc(); }
+
+    // A própria conta pode consultar apenas seu registro; ninguém pode editar admins pelo cliente.
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Dados públicos de consulta; alterações restritas ao administrador.
+    match /times/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /empresas/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /jogadores/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /competicoes/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /transferencias/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /resultados/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /premiacoes/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /museu/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    // Coleção legada (nome antigo) consultada somente para preservar o museu existente.
+    match /museo/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /historico/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /avisos/{id} { allow read: if true; allow create, update, delete: if admin(); }
+    match /config/{id} { allow read: if id == "sistema" || admin(); allow create, update, delete: if admin(); }
+
+    match /auditoria/{id} {
+      allow read: if admin();
+      allow create: if admin();
+      allow update, delete: if false;
+    }
+    match /transacoes/{id} {
+      allow read: if admin();
+      allow create: if admin();
+      allow update, delete: if false;
+    }
+    // Bloqueia explicitamente qualquer coleção não listada.
+    match /{document=**} { allow read, write: if false; }
+  }
+}
