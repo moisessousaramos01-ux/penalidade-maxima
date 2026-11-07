@@ -1,149 +1,145 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#090a0d">
-<title>LEF — Liga Europeia de Futebol</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#090a0d;--panel:#11141b;--panel2:#171b24;--line:#292e3a;--gold:#d4af37;--gold2:#f5dc82;--white:#eeeDE8;--muted:#999eaa;--red:#e15b5b;--green:#65c995}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
-#intro{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse at center,#29220d 0,#11100b 28%,#090a0d 72%)}
-.intro-inner{max-width:650px}.brand{font:900 clamp(48px,13vw,104px) Cinzel,serif;letter-spacing:3px;background:linear-gradient(#fff0ae,#d4af37,#8d6818);color:transparent;background-clip:text;-webkit-background-clip:text}
-.intro-sub{letter-spacing:5px;color:var(--gold);font-size:clamp(10px,2vw,14px);margin:14px 0 34px}.enter{border:0;border-radius:12px;padding:15px 48px;background:linear-gradient(#f8df8b,#c79b28);font-weight:900;letter-spacing:2px;color:#15120a;box-shadow:0 8px 30px #d4af3733}
-header{position:sticky;top:0;z-index:10;background:#090a0df2;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
-.top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font:900 21px Cinzel,serif;color:var(--gold);cursor:pointer}.status{font-size:10px;color:var(--muted)}
-nav{display:flex;gap:7px;overflow:auto;padding:0 14px 12px;max-width:1200px;margin:auto;scrollbar-width:thin}
-nav button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:30px;padding:9px 13px;font-size:11px;font-weight:700}
-nav button.active{background:var(--gold);border-color:var(--gold);color:#17130a}
-main{max-width:1200px;margin:auto;padding:22px 16px 90px}.page{display:none}.page.active{display:block}
-h1,h2,h3{margin:0 0 14px}h1,h2{font-family:Cinzel,serif;color:var(--gold2)}h2{font-size:22px}h3{font-size:15px}.muted{color:var(--muted)}.small{font-size:11px;color:var(--muted)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:18px}
-.card{background:linear-gradient(145deg,var(--panel),#0e1015);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
-.stat-label{font-size:10px;color:var(--muted);letter-spacing:1px}.stat-value{font-size:25px;font-weight:900;margin-top:6px}.gold{color:var(--gold2)}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.btn{border:1px solid var(--line);background:var(--panel2);color:var(--white);padding:10px 14px;border-radius:10px;font-size:12px;font-weight:700}.btn.primary{background:linear-gradient(#f5dc82,#c79b28);color:#15120a;border:0}.btn.danger{border-color:#713b40;color:#ff9b9b}.btn:disabled{opacity:.45;cursor:not-allowed}
-.field{display:flex;flex-direction:column;gap:5px;margin:9px 0}.field label{font-size:11px;color:var(--muted)}input,select,textarea{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:9px;background:#090b10;color:var(--white);outline:none}textarea{min-height:90px;resize:vertical}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
-table{width:100%;border-collapse:collapse;min-width:520px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);font-size:12px}th{font-size:10px;color:var(--muted);text-transform:uppercase}
-.table-wrap{overflow:auto}.empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}
-.item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item-title{font-weight:800}.pill{display:inline-block;border:1px solid var(--line);border-radius:30px;padding:4px 8px;color:var(--muted);font-size:10px}
-.notice{border:1px solid #806923;background:#211b0d;border-radius:13px;padding:14px;margin:0 0 12px}.notice h3{color:var(--gold2)}
-#login{position:fixed;inset:0;z-index:50;background:#000d;display:flex;align-items:center;justify-content:center;padding:18px}
-.modal{width:min(100%,430px);background:var(--panel);border:1px solid var(--gold);border-radius:17px;padding:20px;box-shadow:0 20px 80px #000}
-#adminbar{display:none;position:fixed;bottom:12px;right:12px;z-index:20;background:#1c190f;border:1px solid var(--gold);color:var(--gold2);padding:8px 12px;border-radius:30px;font-size:10px}
-footer{text-align:center;color:#626773;font-size:10px;padding:24px}
-@media(min-width:700px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.top{padding:16px 22px}main{padding:28px 22px 90px}}
-
-/* SITE PÚBLICO: somente navegação e conteúdo de visitante. */
-#adminbar{display:none!important}
-#connection{display:none!important}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090b10">
+  <title>WEPEMOY APP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+  <script defer src="./js/firebase.js"></script>
+  <script defer src="./js/app.js"></script>
 </head>
-<body data-mode="public">
-<section id="intro">
- <div class="intro-inner">
-  <div class="brand" id="introLogo">LEF</div>
-  <div class="intro-sub">LIGA EUROPEIA DE FUTEBOL · TEMPORADA 1</div>
-  <button class="enter" id="enterBtn">ENTRAR</button>
- </div>
-</section>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" id="brandHome" title="WEPEMOY">WEPEMOY</a>
+    <div class="top-actions">
+      <span id="connection" class="status">Conectando Firebase…</span>
+      <span id="userLabel" class="muted">Visitante</span>
+      <button id="loginOpen" class="btn btn-gold hidden">Entrar</button>
+      <button id="logoutBtn" class="btn btn-outline hidden">Sair</button>
+    </div>
+  </header>
 
-<div id="site" class="hidden">
-<header>
- <div class="top"><div class="logo" id="secretLogo" title="LEF">LEF</div><div class="status" id="connection">MODO DE VISUALIZAÇÃO</div></div>
- <nav id="nav">
-  <button class="active" data-page="inicio">INÍCIO</button><button data-page="times">TIMES</button><button data-page="jogadores">JOGADORES</button><button data-page="empresas">EMPRESAS</button><button data-page="competicoes">COMPETIÇÕES</button><button data-page="transferencias">TRANSFERÊNCIAS</button><button data-page="premiacoes">PREMIAÇÕES</button><button data-page="rankings">RANKINGS</button><button data-page="museu">MUSEU</button><button data-page="historico">HISTÓRICO</button>
- </nav>
-</header>
-<main>
- <section class="page active" id="page-inicio">
-  <h1>LEF — TEMPORADA 1</h1><p class="muted">O futebol é decidido em campo. A história é construída aqui.</p>
-  <div id="publicNotices"></div>
-  <div class="stats">
-   <div class="card"><div class="stat-label">TIMES</div><div class="stat-value" id="statTeams">0</div></div>
-   <div class="card"><div class="stat-label">JOGADORES</div><div class="stat-value" id="statPlayers">0</div></div>
-   <div class="card"><div class="stat-label">EMPRESAS</div><div class="stat-value" id="statCompanies">0</div></div>
-   <div class="card"><div class="stat-label">COMPETIÇÕES</div><div class="stat-value" id="statCompetitions">0</div></div>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="side-caption">CENTRAL WEPEMOY</div>
+      <button class="nav active" data-page="home">⌂ <span>Visão geral</span></button>
+      <button class="nav" data-page="teams">⚽ <span>Times</span></button>
+      <button class="nav" data-page="players">♟ <span>Jogadores</span></button>
+      <button class="nav" data-page="companies">◈ <span>Empresas / Bolsa</span></button>
+      <button class="nav" data-page="market">⇄ <span>Mercado / Leilão</span></button>
+      <button class="nav" data-page="competitions">🏆 <span>Competições</span></button>
+      <button class="nav" data-page="results">✓ <span>Resultados</span></button>
+      <button class="nav" data-page="rankings">▤ <span>Rankings</span></button>
+      <button class="nav" data-page="museum">♛ <span>Museu</span></button>
+      <button class="nav" data-page="history">◷ <span>Histórico</span></button>
+      <button class="nav admin-only hidden" data-page="admin">⚙ <span>Administração</span></button>
+    </aside>
+
+    <main class="content">
+      <section id="page-home" class="page active">
+        <div class="hero">
+          <div><p class="eyebrow">WEPEMOY · LEF — LIGA EUROPEIA DE FUTEBOL</p><h1>Um universo.<br><span>Uma plataforma.</span></h1><p class="muted">Acompanhe clubes, empresas, atletas, competições e o mercado WEPEMOY.</p></div>
+          <div class="hero-mark" id="secretLogo" title="WEPEMOY">W</div>
+        </div>
+        <div class="stats">
+          <article class="stat"><small>TIMES</small><strong id="statTeams">—</strong></article>
+          <article class="stat"><small>JOGADORES</small><strong id="statPlayers">—</strong></article>
+          <article class="stat"><small>EMPRESAS</small><strong id="statCompanies">—</strong></article>
+          <article class="stat"><small>COMPETIÇÕES</small><strong id="statCompetitions">—</strong></article><article class="stat"><small>PATRIMÔNIO VIRTUAL</small><strong id="statPatrimony">R$ 0</strong></article>
+        </div>
+        <div class="grid two">
+          <article class="panel"><div class="panel-head"><h2>Comunicados</h2></div><div id="noticesList" class="stack empty">Nenhum comunicado publicado.</div></article>
+          <article class="panel"><div class="panel-head"><h2>Temporada</h2></div><div class="season-box"><span id="seasonStatus" class="pill">PREPARAÇÃO</span><p id="seasonNumber" class="muted">Temporada 1</p><p class="muted">O status oficial é controlado pela administração.</p><p><b id="stockIndex">Índice WEPEMOY: R$ 0</b></p></div></article>
+        </div>
+        <div class="grid two"><article class="panel"><div class="panel-head"><h2>Últimas transferências</h2></div><div id="homeTransfers" class="stack empty">Nenhuma transferência.</div></article><article class="panel"><div class="panel-head"><h2>Últimos campeões</h2></div><div id="homeChampions" class="stack empty">Nenhum campeão registrado.</div></article></div>
+        <article class="panel"><div class="panel-head"><h2>Últimos acontecimentos</h2><button class="link-btn" data-go="history">Ver histórico</button></div><div id="latestHistory" class="stack empty">Nenhum acontecimento registrado.</div></article>
+      </section>
+
+      <section id="page-teams" class="page">
+        <div class="page-head"><div><p class="eyebrow">LEF</p><h1>Times</h1><p class="muted">Clubes, patrimônio, títulos e elenco.</p></div></div>
+        <form id="teamForm" class="panel admin-form hidden"><h2>Cadastrar time</h2><div class="form-grid"><label>Nome<input name="name" required maxlength="80"></label><label>URL do escudo<input name="logo" type="url"></label><label>Enviar escudo<input name="logoFile" type="file" accept="image/*"></label><label>País<input name="country"></label><label>Descrição<input name="description"></label><label>Caixa inicial (R$)<input name="cash" type="number" min="0" step="1" value="0"></label></div><button class="btn btn-gold">Salvar time</button></form>
+        <div id="teamsList" class="grid cards"></div>
+      </section>
+
+      <section id="page-players" class="page">
+        <div class="page-head"><div><p class="eyebrow">ELENCO E CONTRATOS</p><h1>Jogadores</h1><p class="muted">Cadastro, vínculo empresarial, posição e situação.</p></div></div>
+        <form id="playerForm" class="panel admin-form hidden"><h2>Cadastrar jogador</h2><div class="form-grid"><label>Nome<input name="name" required maxlength="80"></label><label>Idade<input name="age" type="number" min="1" max="100" value="20"></label><label>Nacionalidade<input name="nationality"></label><label>Foto (URL)<input name="photo" type="url"></label><label>Enviar foto<input name="photoFile" type="file" accept="image/*"></label><label>Posição<select name="position"><option>Goleiro</option><option>Defensor</option><option>Meio-campista</option><option>Atacante</option></select></label><label>Empresa proprietária<select name="companyId" id="playerCompany"><option value="">Sem empresa</option></select></label><label>Time atual<select name="teamId" id="playerTeam"><option value="">Sem time</option></select></label><label>Bônus multiplicador<input name="bonus" type="number" min="0" step="0.1" value="1"></label><label>Valor de mercado (R$)<input name="value" type="number" min="0" value="0"></label></div><button class="btn btn-gold">Salvar jogador</button></form>
+        <div id="playersList" class="table-wrap"></div>
+      </section>
+
+      <section id="page-companies" class="page">
+        <div class="page-head"><div><p class="eyebrow">WEPEMOY BANK</p><h1>Empresas e bolsa</h1><p class="muted">Caixa, valuation, carteira de atletas e movimentações.</p></div></div>
+        <form id="companyForm" class="panel admin-form hidden"><h2>Criar empresa</h2><div class="form-grid"><label>Nome<input name="name" required maxlength="80"></label><label>Logo (URL)<input name="logo" type="url"></label><label>Enviar logo<input name="logoFile" type="file" accept="image/*"></label><label>Caixa inicial (R$)<input name="cash" type="number" min="0" value="0"></label><label>Valorização (%)<input name="valuation" type="number" min="0" value="0"></label></div><button class="btn btn-gold">Criar empresa</button></form>
+        <div id="companiesList" class="grid cards"></div>
+      </section>
+
+      <section id="page-market" class="page">
+        <div class="page-head"><div><p class="eyebrow">NEGOCIAÇÃO</p><h1>Mercado / Leilão</h1><p class="muted">Compra e venda de jogadores entre empresas. Operações restritas à administração nesta primeira versão.</p></div></div>
+        <form id="transferForm" class="panel admin-form hidden"><h2>Registrar transferência</h2><div class="form-grid"><label>Jogador<select name="playerId" id="transferPlayer" required></select></label><label>Empresa vendedora<select name="sellerId" id="transferSeller"></select></label><label>Empresa compradora<select name="buyerId" id="transferBuyer" required></select></label><label>Time atual<select name="teamId" id="transferTeam"></select></label><label>Valor de mercado (R$)<input name="amount" id="transferAmount" type="number" min="1" required readonly></label></div><button class="btn btn-gold">Confirmar compra</button></form>
+        <div class="panel"><div class="panel-head"><h2>Últimas movimentações</h2></div><div id="transfersList" class="stack empty">Nenhuma transferência.</div></div>
+      </section>
+
+      <section id="page-competitions" class="page">
+        <div class="page-head"><div><p class="eyebrow">LEF</p><h1>Competições</h1><p class="muted">Organização, premiação e status dos torneios.</p></div></div>
+        <form id="competitionForm" class="panel admin-form hidden"><h2>Criar competição</h2><div class="form-grid"><label>Nome<input name="name" required></label><label>Premiação (R$)<input name="prize" type="number" min="0" value="0"></label><label>Categoria<select name="kind"><option>Personalizada</option><option>Brasileirão</option><option>Copa</option><option>Continental</option><option>Mundial</option></select></label><label>Valorização (%)<input name="valuation" type="number" min="0" value="0"></label></div><button class="btn btn-gold">Criar competição</button></form>
+        <div id="competitionsList" class="grid cards"></div>
+      </section>
+
+      <section id="page-results" class="page">
+        <div class="page-head"><div><p class="eyebrow">REGISTRO OFICIAL</p><h1>Resultados</h1><p class="muted">Campeões, vice-campeões e histórico competitivo.</p></div></div>
+        <form id="resultForm" class="panel admin-form hidden"><h2>Publicar resultado</h2><div class="form-grid"><label>Competição<select name="competitionId" id="resultCompetition" required></select></label><label>Campeão<select name="championId" id="resultChampion" required></select></label><label>Vice-campeão<select name="runnerUpId" id="resultRunnerUp" required></select></label><label>Placar<input name="score" placeholder="2 x 1"></label></div><button class="btn btn-gold">Publicar resultado</button></form>
+        <div id="resultsList" class="stack empty">Nenhum resultado publicado.</div><article class="panel"><div class="panel-head"><h2>Premiações oficiais</h2></div><div id="awardsList" class="stack empty">Nenhuma premiação registrada.</div></article>
+      </section>
+
+      <section id="page-rankings" class="page">
+        <div class="page-head"><div><p class="eyebrow">CLASSIFICAÇÕES</p><h1>Rankings</h1><p class="muted">Indicadores calculados a partir dos registros oficiais.</p></div></div>
+        <div id="rankingsList" class="grid cards"></div>
+      </section>
+
+      <section id="page-museum" class="page">
+        <div class="page-head"><div><p class="eyebrow">MEMÓRIA DA LIGA</p><h1>Museu WEPEMOY</h1><p class="muted">Campeões, lendas e premiações históricas.</p></div></div>
+        <form id="museumForm" class="panel admin-form hidden"><h2>Adicionar registro ao museu</h2><div class="form-grid"><label>Categoria<select name="category"><option>Campeões</option><option>Lendas</option><option>Bola de Ouro</option><option>Chuteira de Ouro</option><option>Troféus</option><option>Jogadores aposentados</option></select></label><label>Nome / descrição<input name="name" required></label><label>Temporada<input name="season"></label><label>Foto<input name="photoFile" type="file" accept="image/*"></label></div><button class="btn btn-gold">Adicionar ao museu</button></form>
+        <div id="museumList" class="grid cards"></div>
+      </section>
+
+      <section id="page-history" class="page">
+        <div class="page-head"><div><p class="eyebrow">TRANSPARÊNCIA</p><h1>Histórico oficial</h1><p class="muted">Resultados, comunicados e eventos do sistema.</p></div></div>
+        <div id="historyList" class="stack empty">Nenhum registro histórico.</div>
+      </section>
+
+      <section id="page-admin" class="page">
+        <div class="page-head"><div><p class="eyebrow">CONTROLE DO SISTEMA</p><h1>Administração</h1><p class="muted">Ações privilegiadas e configurações da temporada.</p></div></div>
+        <div class="grid two">
+          <article class="panel"><h2>Configurações financeiras virtuais</h2><form id="configForm" class="form-grid"><label>Custo de criação<input name="creationCost" type="number" min="0"></label><label>Repasse empresa (%)<input name="companyShare" type="number" min="0" max="100" step="0.1"></label><label>Valorização coletiva<input name="collectiveValue" type="number" min="0"></label><label>Valorização individual<input name="individualValue" type="number" min="0"></label><label>Multiplicador bônus<input name="bonusMultiplier" type="number" min="0" step="0.1"></label><label>Taxa de venda (%)<input name="saleFee" type="number" min="0" max="100" step="0.1"></label><label>Bônus inicial<input name="initialBonus" type="number" min="0" step="0.1"></label><label>Prêmio Brasileirão<input name="prizeBrasileirao" type="number" min="0"></label><label>Prêmio Copa<input name="prizeCopa" type="number" min="0"></label><label>Prêmio Continental<input name="prizeContinental" type="number" min="0"></label><label>Prêmio Mundial<input name="prizeMundial" type="number" min="0"></label><button class="btn btn-gold" type="submit">Salvar configurações</button></form></article>
+          <article class="panel"><h2>Temporada</h2><p id="adminSeasonLabel" class="muted">Status: PREPARAÇÃO</p><div class="actions"><button id="startSeason" class="btn btn-gold">Iniciar temporada</button><button id="closeSeason" class="btn btn-outline">Encerrar temporada</button></div></article>
+          <article class="panel"><h2>Comunicado público</h2><form id="noticeForm"><label>Título<input name="title" required></label><label>Mensagem<textarea name="body" required rows="3"></textarea></label><button class="btn btn-gold">Publicar</button></form></article>
+        </div>
+        <article class="panel"><h2>Operações administrativas</h2><div class="actions"><button class="btn btn-outline" id="adjustCashBtn" type="button">Ajustar caixa</button><button class="btn btn-outline" id="createPlayerForCompanyBtn" type="button">Criar jogador por empresa</button><button class="btn btn-outline" id="retirePlayerBtn" type="button">Aposentar jogador</button></div></article>
+        <article class="panel"><div class="panel-head"><h2>Auditoria recente</h2></div><div id="auditList" class="stack empty">Sem eventos de auditoria.</div></article>
+      </section>
+
+      <footer>WEPEMOY APP · Dados sincronizados pelo Firebase · <span id="footerUser">Modo público</span></footer>
+    </main>
   </div>
-  <div class="grid"><div class="card"><h3>Temporada</h3><div id="seasonStatus" class="gold">PREPARAÇÃO</div><p class="small">Acompanhe os registros oficiais da Liga Europeia de Futebol.</p></div><div class="card"><h3>Últimos acontecimentos</h3><div id="latestEvents" class="small">Nenhum registro publicado.</div></div></div>
- </section>
- <section class="page" id="page-times"><h2>Times</h2><div id="teamsList" class="grid"></div></section>
- <section class="page" id="page-jogadores"><h2>Jogadores</h2><div id="playersList"></div></section>
- <section class="page" id="page-empresas"><h2>Empresas</h2><div id="companiesList" class="grid"></div></section>
- <section class="page" id="page-competicoes"><h2>Competições</h2><div id="competitionsList" class="grid"></div></section>
- <section class="page" id="page-transferencias"><h2>Transferências e contratos</h2><div id="transfersList"></div></section>
- <section class="page" id="page-premiacoes"><h2>Premiações</h2><div id="awardsList"></div></section>
- <section class="page" id="page-rankings"><h2>Rankings</h2><div class="grid" id="rankingsList"></div></section>
- <section class="page" id="page-museu"><h2>Museu LEF</h2><div class="grid" id="museumList"></div></section>
- <section class="page" id="page-historico"><h2>Histórico oficial</h2><div id="historyList"></div></section>
- 
-</main>
-<footer>LEF · LIGA EUROPEIA DE FUTEBOL</footer>
-</div>
 
-<div id="login" class="hidden"><div class="modal"><h2>Acesso administrativo</h2><p class="small">Área restrita. Entre com uma conta autorizada.</p><div class="field"><label>E-mail</label><input id="secretEmail" type="email" autocomplete="username"></div><div class="field"><label>Senha</label><input id="secretPassword" type="password" autocomplete="current-password"></div><button class="btn primary" id="secretLoginBtn" style="width:100%">Entrar</button><button class="btn" id="closeSecret" style="width:100%;margin-top:8px">Cancelar</button><p id="secretMessage" class="small"></p></div></div>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-<script src="firebase.js"></script>
-<script>
-/* Site público LEF: autenticação somente para o atalho secreto; Firestore apenas leitura. */
-let db=null,auth=null,cache={times:[],empresas:[],jogadores:[],competicoes:[],transferencias:[],premiacoes:[],historico:[],avisos:[],museu:[],config:{seasonStatus:"PREPARAÇÃO"}};
-const $=id=>document.getElementById(id);
-const money=v=>"R$ "+Number(v||0).toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:0});
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function toast(msg){alert(msg)}
-function setPage(name){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$("page-"+name)?.classList.add("active");document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===name));window.scrollTo({top:0,behavior:"smooth"});}
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>setPage(b.dataset.page)));
-$("enterBtn").onclick=()=>{$("intro").classList.add("hidden");$("site").classList.remove("hidden");refresh();};
-let secretClicks=0,secretTimer=null;
-function secretTap(){secretClicks++;clearTimeout(secretTimer);secretTimer=setTimeout(()=>secretClicks=0,1300);if(secretClicks>=3){secretClicks=0;$("login").classList.remove("hidden");}}
-$("secretLogo").onclick=secretTap;$("introLogo").onclick=secretTap;
-$("closeSecret").onclick=()=>$("login").classList.add("hidden");
-function firebaseErrorText(e){return `Erro Firebase (${e?.code||"sem-código"}): ${e?.message||String(e||"Erro desconhecido")}`;}
-async function checkAdmin(uid){
- try{const snap=await db.collection("admins").doc(uid).get({source:"server"});if(!snap.exists)return {authorized:false,message:`Conta autenticada, mas admins/${uid} não foi encontrado.`};const data=snap.data()||{};if(data.active!==true)return {authorized:false,message:'A conta não está autorizada: o campo active precisa ser Boolean true.'};return {authorized:true,message:"Administrador autorizado. Abrindo painel..."};}
- catch(e){return {authorized:false,message:firebaseErrorText(e)};}
-}
-async function loginSecret(){
- const msg=$("secretMessage"),email=$("secretEmail").value.trim().toLowerCase(),password=$("secretPassword").value;
- if(!email||!password){msg.textContent="Informe e-mail e senha.";return;}
- try{msg.textContent="Verificando acesso...";const cred=await auth.signInWithEmailAndPassword(email,password);const result=await checkAdmin(cred.user.uid);if(!result.authorized){msg.textContent=result.message;await auth.signOut();return;}msg.textContent=result.message;window.location.href="admin.html";}
- catch(e){msg.textContent=firebaseErrorText(e);}
-}
-$("secretLoginBtn").onclick=loginSecret;
-async function initFirebase(){
- try{if(!firebase.apps.length)throw new Error("O arquivo firebase.js não inicializou o projeto.");db=firebase.firestore();auth=firebase.auth();await refresh();}
- catch(e){console.error(e);if($("connection"))$("connection").textContent="FALHA AO CONECTAR AO FIREBASE";}
-}
-async function getAll(col){if(!db)return[];const snap=await db.collection(col).get();return snap.docs.map(d=>({id:d.id,...d.data()}));}
-async function refresh(){
- if(!db)return;
- try{const names=["times","empresas","jogadores","competicoes","transferencias","premiacoes","historico","avisos","museu"];const vals=await Promise.all(names.map(getAll));names.forEach((n,i)=>cache[n]=vals[i]);const cfg=await db.collection("config").doc("sistema").get();if(cfg.exists)cache.config={...cache.config,...cfg.data()};render();}
- catch(e){console.error(e);if($("connection"))$("connection").textContent="ERRO AO LER FIRESTORE";render();}
-}
-function render(){
- $("statTeams").textContent=cache.times.length;$("statPlayers").textContent=cache.jogadores.length;$("statCompanies").textContent=cache.empresas.length;$("statCompetitions").textContent=cache.competicoes.length;
- $("seasonStatus").textContent=cache.config.seasonStatus||"PREPARAÇÃO";
- $("teamsList").innerHTML=cards(cache.times,t=>`<b>${esc(t.name)}</b><p class="small">Caixa: ${money(t.cash)} · Títulos: ${t.titles||0}</p>`);
- $("companiesList").innerHTML=cards(cache.empresas,e=>`<b>${esc(e.name)}</b><p class="small">Caixa: ${money(e.cash)} · Valorização acumulada: ${e.valuation||0}%</p><p class="small">Jogadores: ${cache.jogadores.filter(p=>p.companyId===e.id).length}</p>`);
- $("competitionsList").innerHTML=cards(cache.competicoes,c=>`<b>${esc(c.name)}</b><p class="small">Premiação: ${money(c.prize)} · Valorização: ${c.valuation||0}%</p><span class="pill">${esc(c.status||"EM PREPARAÇÃO")}</span>`);
- $("playersList").innerHTML=cache.jogadores.length?`<div class="table-wrap"><table><thead><tr><th>Jogador</th><th>Posição</th><th>Empresa</th><th>Bônus</th><th>Status</th></tr></thead><tbody>${cache.jogadores.map(p=>`<tr><td><b>${esc(p.name)}</b><br><span class="small">${esc(p.nationality||"")}</span></td><td>${esc(p.position||"-")}</td><td>${esc(cache.empresas.find(e=>e.id===p.companyId)?.name||"Time")}</td><td>${p.bonus||0}%</td><td>${esc(p.status||"Inativo")}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">Nenhum jogador cadastrado.</div>';
- $("transfersList").innerHTML=cards(cache.transferencias,t=>`<b>${esc(t.playerName||"Jogador")}</b><p class="small">${esc(t.type||"Transferência")} · ${esc(t.origin||"-")} → ${esc(t.destination||"-")} · ${money(t.value)}</p>`);
- $("awardsList").innerHTML=cards(cache.premiacoes,a=>`<b>${esc(a.name||"Premiação")}</b><p class="small">${esc(a.playerName||"")} · ${esc(a.teamName||"")} · ${esc(a.season||"")}</p>`);
- const richest=[...cache.empresas].sort((a,b)=>(b.cash||0)-(a.cash||0)).slice(0,5),richTeams=[...cache.times].sort((a,b)=>(b.cash||0)-(a.cash||0)).slice(0,5),titles=[...cache.times].sort((a,b)=>(b.titles||0)-(a.titles||0)).slice(0,5),runner=[...cache.times].sort((a,b)=>(b.runnersUp||0)-(a.runnersUp||0)).slice(0,5);
- $("rankingsList").innerHTML=rankCard("Empresas mais ricas",richest,x=>`${esc(x.name)} — ${money(x.cash)}`)+rankCard("Times mais ricos",richTeams,x=>`${esc(x.name)} — ${money(x.cash)}`)+rankCard("Times com mais títulos",titles,x=>`${esc(x.name)} — ${x.titles||0}`)+rankCard("Times com mais vices",runner,x=>`${esc(x.name)} — ${x.runnersUp||0}`)+rankCard("Jogadores lucrativos",[...cache.jogadores].sort((a,b)=>(b.profit||0)-(a.profit||0)).slice(0,5),x=>`${esc(x.name)} — ${money(x.profit)}`);
- $("museumList").innerHTML=cards(cache.museu,m=>`<b>${esc(m.category||"Registro")}</b><p class="small">${esc(m.name||m.playerName||"")}</p>`);
- $("historyList").innerHTML=cards([...cache.historico].sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)),h=>`<b>${esc(h.title||h.type||"Registro LEF")}</b><p class="small">${esc(h.description||"")} · ${dateText(h.createdAt)}</p>`);
- $("latestEvents").innerHTML=cache.historico.slice(0,4).map(h=>`<div class="item">${esc(h.title||h.type||"Registro")}<br><span class="small">${dateText(h.createdAt)}</span></div>`).join("")||"Nenhum registro publicado.";
- $("publicNotices").innerHTML=cache.avisos.filter(n=>n.published===true).map(n=>`<div class="notice"><h3>${esc(n.title)}</h3><div class="small" style="color:#ddd">${esc(n.body)}</div></div>`).join("");
-}
-function cards(arr,fn){return arr.length?`<div class="grid">${arr.map(x=>`<div class="card">${fn(x)}</div>`).join("")}</div>`:'<div class="empty">Nenhum registro cadastrado.</div>'}
-function rankCard(title,arr,fn){return `<div class="card"><h3>${title}</h3>${arr.map((x,i)=>`<div class="item"><b>${i+1}º</b> ${fn(x)}</div>`).join("")||'<p class="small">Sem dados.</p>'}</div>`}
-function dateText(v){try{return v?.toDate?v.toDate().toLocaleString("pt-BR"):v?new Date(v).toLocaleString("pt-BR"):"";}catch(e){return""}}
-initFirebase();
-</script>
+  <dialog id="loginDialog" class="dialog">
+    <form id="loginForm" method="dialog">
+      <button type="button" class="dialog-close" id="loginClose">×</button>
+      <p class="eyebrow">ÁREA RESTRITA</p><h2>Acesso administrativo</h2>
+      <label>E-mail<input name="email" type="email" autocomplete="username" required></label>
+      <label>Senha<input name="password" type="password" autocomplete="current-password" required></label>
+      <p id="loginMessage" class="message"></p>
+      <button class="btn btn-gold full" type="submit">Entrar com Firebase</button>
+      <p class="muted tiny">A autorização é verificada no Firestore. Não existe senha administrativa gravada no HTML.</p>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
 </body>
 </html>
